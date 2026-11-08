@@ -1,0 +1,172 @@
+@model IEnumerable<ToDoApp.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "My Tasks";
+    var searchString = Context.Request.Query["searchString"].ToString();
+    var filter = Context.Request.Query["filter"].ToString();
+}
+
+<div class="tasks-page">
+
+    <div class="tasks-header">
+        <div>
+            <p class="welcome-text">YOUR PRODUCTIVITY SPACE</p>
+            <h1>My Tasks</h1>
+            <p class="text-muted">Keep everything organized and stay on track.</p>
+        </div>
+
+        <a asp-action="Create" class="btn btn-primary add-task-btn">
+            + Add New Task
+        </a>
+    </div>
+
+    <!-- Search -->
+    <form asp-action="Index" method="get" class="search-section">
+        <input type="hidden" name="filter" value="@filter" />
+
+        <div class="search-box">
+            <span class="search-icon">⌕</span>
+
+            <input type="text"
+                   name="searchString"
+                   value="@searchString"
+                   placeholder="Search for a task..." />
+
+            <button type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- Filters -->
+    <div class="task-filters">
+
+        <a asp-action="Index"
+           asp-route-searchString="@searchString"
+           class="filter-btn @(string.IsNullOrEmpty(filter) ? "active" : "")">
+            All Tasks
+        </a>
+
+        <a asp-action="Index"
+           asp-route-filter="Pending"
+           asp-route-searchString="@searchString"
+           class="filter-btn @(filter == "Pending" ? "active" : "")">
+            Pending
+        </a>
+
+        <a asp-action="Index"
+           asp-route-filter="Completed"
+           asp-route-searchString="@searchString"
+           class="filter-btn @(filter == "Completed" ? "active" : "")">
+            Completed
+        </a>
+
+    </div>
+
+    <!-- Tasks Header -->
+    <div class="tasks-list-header">
+        <h3>All Your Tasks</h3>
+        <span>@Model.Count() tasks</span>
+    </div>
+
+    <!-- Tasks Cards -->
+    <div class="row g-4">
+
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-xl-4">
+
+                    <div class="todo-glass-light task-card">
+
+                        <div class="task-card-top">
+
+                            <span class="priority-badge
+                                @(item.Priority == "High" ? "priority-high" :
+  item.Priority == "Medium" ? "priority-medium" : "priority-low")">
+                                @item.Priority Priority
+                            </span>
+
+                            <span class="task-date">
+                                <span>@item.DueDate.ToString("dd MMM yyyy")</span>
+                                <small>@item.DueDate.ToString("hh:mm tt")</small>
+                            </span>
+
+                        </div>
+
+                        <h4 class="task-title @(item.IsCompleted ? "completed-title" : "")">
+                            @item.Title
+                        </h4>
+
+                        <p class="task-description">
+                            @(string.IsNullOrWhiteSpace(item.Description)
+                                ? "No description added."
+                                : item.Description)
+                        </p>
+
+                        <div class="task-card-bottom">
+
+                            <form asp-action="ToggleComplete"
+                                  asp-route-id="@item.Id"
+                                  method="post"
+                                  class="task-status-form">
+
+                                <input type="checkbox"
+                                       class="task-checkbox"
+                                       checked="@item.IsCompleted"
+                                       onchange="this.form.submit()" />
+
+                                <span class="@(item.IsCompleted ? "status-completed" :
+                                      item.DueDate < DateTime.Now ? "status-overdue" : "status-pending")">
+
+                                    @(item.IsCompleted ? "Completed" :
+                                        item.DueDate < DateTime.Now ? "Overdue" : "Pending")
+
+                                </span>
+
+                            </form>
+
+                            <div class="task-actions">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="task-action edit-action">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.Id"
+                                   class="task-action delete-action">
+                                    Delete
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+
+                <div class="todo-glass-light empty-tasks">
+                    <div class="empty-icon">✦</div>
+
+                    <h4>No tasks found</h4>
+
+                    <p>Try another search or create a new task.</p>
+
+                    <a asp-action="Create" class="btn btn-primary">
+                        Add New Task
+                    </a>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>

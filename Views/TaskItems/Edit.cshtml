@@ -1,0 +1,81 @@
+@model ToDoApp.Models.TaskItem
+
+@{
+    ViewData["Title"] = "Edit Task";
+}
+
+<div class="form-page">
+    <div class="form-header">
+        <p class="welcome-text">UPDATE YOUR TASK</p>
+        <h1>Edit Task</h1>
+        <p class="text-muted">Make changes to your task and keep everything up to date.</p>
+    </div>
+
+    <div class="todo-glass-light task-form-card">
+        <form asp-action="Edit" method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-4">
+                <label asp-for="Title" class="form-label">Task Title</label>
+                <input asp-for="Title" class="form-control custom-input"
+                       placeholder="What do you need to do?" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control custom-input"
+                          rows="4" placeholder="Add more details about your task..."></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label asp-for="DueDate" class="form-label">Due Date & Time</label>
+                    <input asp-for="DueDate"
+                           type="datetime-local"
+                           min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")"
+                           class="form-control custom-input" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label asp-for="Priority" class="form-label">Priority</label>
+                    <select asp-for="Priority" class="form-select custom-input">
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                    <span asp-validation-for="Priority" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="completion-option mb-4">
+                <input asp-for="IsCompleted" class="form-check-input" />
+                <label asp-for="IsCompleted" class="form-check-label">
+                    Mark this task as completed
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary save-task-btn">
+                    Save Changes
+                </button>
+
+                <a asp-action="Index" class="btn cancel-task-btn">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

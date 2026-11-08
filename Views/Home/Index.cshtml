@@ -1,0 +1,170 @@
+﻿@model IEnumerable<ToDoApp.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-container">
+
+    <!-- Welcome Section -->
+    <div class="dashboard-header mb-4">
+        <div>
+            <p class="welcome-text">WELCOME BACK 👋</p>
+            <h1>My Dashboard</h1>
+            <p class="text-muted">Manage your tasks and stay productive.</p>
+        </div>
+
+        <a asp-controller="TaskItems"
+           asp-action="Create"
+           class="btn btn-primary add-task-btn">
+            + Add New Task
+        </a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="todo-glass-light stat-card">
+                <p>Total Tasks</p>
+                <h2>@ViewBag.TotalTasks</h2>
+                <span>All your tasks</span>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="todo-glass-light stat-card">
+                <p>Completed</p>
+                <h2>@ViewBag.CompletedTasks</h2>
+                <span>Tasks finished</span>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="todo-glass-light stat-card">
+                <p>Pending</p>
+                <h2>@ViewBag.PendingTasks</h2>
+                <span>Tasks in progress</span>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="todo-glass-light stat-card">
+                <p>Overdue</p>
+                <h2>@ViewBag.OverdueTasks</h2>
+                <span>Past due date</span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recent Tasks -->
+    <div class="todo-glass-light tasks-section">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3>Recent Tasks</h3>
+                <p class="text-muted mb-0">Your task overview</p>
+            </div>
+
+            <a asp-controller="TaskItems"
+               asp-action="Index"
+               class="view-all-link">
+                View All →
+            </a>
+        </div>
+
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table dashboard-table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Due Date</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Take(5))
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.Title</strong>
+                                </td>
+
+                                <td>
+                                    <div>@item.DueDate.ToString("dd MMM yyyy")</div>
+                                    <small class="text-muted">@item.DueDate.ToString("hh:mm tt")</small>
+                                </td>
+
+                                <td>
+                                    @if (item.Priority == "High")
+                                    {
+                                        <span class="badge priority-high">High</span>
+                                    }
+                                    else if (item.Priority == "Medium")
+                                    {
+                                        <span class="badge priority-medium">Medium</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge priority-low">Low</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.IsCompleted)
+                                    {
+                                        <span class="badge status-completed">
+                                            Completed
+                                        </span>
+                                    }
+                                    else if (item.DueDate < DateTime.Now)
+                                    {
+                                        <span class="status-overdue">
+                                            Overdue
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge status-pending">
+                                            Pending
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <a asp-controller="TaskItems"
+                                       asp-action="Edit"
+                                       asp-route-id="@item.Id"
+                                       class="view-all-link">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5">
+                <h5>No tasks yet!</h5>
+                <p class="text-muted">Start by adding your first task.</p>
+
+                <a asp-controller="TaskItems"
+                   asp-action="Create"
+                   class="btn btn-primary">
+                    Create First Task
+                </a>
+            </div>
+        }
+
+    </div>
+
+</div>

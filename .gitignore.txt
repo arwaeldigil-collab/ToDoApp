@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build files
+bin/
+obj/
+
+# Database files
+*.mdf
+*.ldf
+
+# User-specific files
+*.cache
